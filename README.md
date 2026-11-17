@@ -11,8 +11,8 @@ lands in its zone by itself at every start – without a frame, with the desktop
 5120×1440 screen, for example, a game runs at 2560×1440 on the left, in the middle or on the right.
 
 Why do all this? Because on my ultrawide with one displayPort instead of two I couldnt get all games/programs to 
-only use the left half, while borderless, keeping the mouse in and staying on top of the taskbar.
-So I figures I could just do it properly myself.
+only use the left half, while borderless, keeping the mouse locked in and staying on top of the taskbar.
+So I figured I could just do it properly myself.
 
 ## Using it
 
