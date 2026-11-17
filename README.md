@@ -10,9 +10,6 @@ One wide screen gets back areas that behave like screens of their own. A game is
 lands in its zone by itself at every start – without a frame, with the desktop next to it visible and usable. On a
 5120×1440 screen, for example, a game runs at 2560×1440 on the left, in the middle or on the right.
 
-It is the successor of the Rayman Legends script (`rayman_borderless.ps1`): “one script per game” became “one entry
-per game”.
-
 ## Using it
 
 Add the folder in the Toolbox (**Add program…**), press **Start**, and switch on **Start with Windows** if it should
