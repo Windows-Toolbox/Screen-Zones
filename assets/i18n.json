@@ -1,0 +1,110 @@
+{
+  "page.status": { "de": "Status", "en": "Status" },
+  "page.stopped": {
+    "de": "Gestoppt – Fenster werden gerade nicht gesetzt. „Start“ oben schaltet es ein; mit „Mit Windows starten“ läuft es immer im Hintergrund.",
+    "en": "Stopped – no windows are being placed right now. “Start” above switches it on; with “Start with Windows” it always runs in the background."
+  },
+  "status.held": { "de": "Hält: {games}", "en": "Holding: {games}" },
+  "status.waiting": { "de": "Gleich gesetzt: {games}", "en": "Placing in a moment: {games}" },
+  "status.no_games": {
+    "de": "Läuft – noch kein Spiel eingetragen (unten „Spiel hinzufügen“)",
+    "en": "Running – No game entered yet (“Add a game” below)"
+  },
+  "status.ready": { "de": "Bereit – keins deiner Spiele läuft", "en": "Ready – none of your games is running" },
+
+  "game.off": { "de": "Ausgeschaltet – das Spiel wird in Ruhe gelassen.", "en": "Switched off – the game is left alone." },
+  "game.not_running": { "de": "Läuft nicht – wird beim nächsten Start von selbst gesetzt", "en": "Not running – placed by itself at its next start" },
+  "game.waiting": { "de": "Fenster gefunden – wird nach der Wartezeit gesetzt", "en": "Window found – placed after the waiting time" },
+  "game.held": { "de": "Gehalten: {zone}, {w}×{h}", "en": "Held: {zone}, {w}×{h}" },
+  "game.refused": {
+    "de": "Das Spiel nimmt die Größe nicht an – im Spiel Fenstermodus mit {w}×{h} einstellen. Ins Spiel klicken versucht es erneut.",
+    "en": "The game does not take the size – set windowed mode at {w}×{h} in the game. Clicking into the game tries again."
+  },
+  "game.denied": {
+    "de": "Das Spiel läuft mit Administratorrechten – Windows lässt ein normales Programm nicht an sein Fenster. Spiel ohne „Als Administrator ausführen“ starten.",
+    "en": "The game runs with administrator rights – Windows does not let a normal program touch its window. Start the game without “Run as administrator”."
+  },
+  "game.minimized": { "de": "Minimiert – wird beim Wiederherstellen neu gesetzt", "en": "Minimised – placed again when it is restored" },
+  "game.released": {
+    "de": "Rahmen zurückgegeben – „Wieder einsetzen“ holt es zurück in die Zone, sonst der nächste Start des Spiels",
+    "en": "Frame given back – “Put it back” returns it to its zone, otherwise the game's next start does"
+  },
+  "game.zone": { "de": "Zone", "en": "Zone" },
+  "game.play": { "de": "Spielen", "en": "Play" },
+  "game.release": { "de": "Rahmen zurückgeben", "en": "Give the frame back" },
+  "game.retake": { "de": "Wieder einsetzen", "en": "Put it back" },
+  "game.remove": { "de": "Entfernen", "en": "Remove" },
+  "game.set_in_game": {
+    "de": "Einmal im Spiel einstellen: Fenstermodus mit {w}×{h} (auf dem Hauptbildschirm).",
+    "en": "Set once in the game: windowed mode at {w}×{h} (on the main screen)."
+  },
+  "game.enabled": { "de": "Aktiv", "en": "Active" },
+  "game.borderless": { "de": "Rahmen entfernen", "en": "Remove the frame" },
+  "game.on_top": { "de": "Vor der Taskleiste, solange das Spiel aktiv ist", "en": "In front of the taskbar while the game is active" },
+  "game.delay": { "de": "Wartezeit nach dem Erscheinen des Fensters", "en": "Waiting time after the window appears" },
+  "game.name": { "de": "Name", "en": "Name" },
+  "game.launch": { "de": "„Spielen“ öffnet", "en": "“Play” opens" },
+  "game.recognised": {
+    "de": "Erkannt an: {exe}. „Spielen“ öffnet z. B. uplay://launch/410/0, steam://rungameid/<Nummer> oder den Pfad einer .exe – leer lassen, wenn du das Spiel selbst startest.",
+    "en": "Recognised by: {exe}. “Play” opens e.g. uplay://launch/410/0, steam://rungameid/<number> or the path of an .exe – leave it empty if you start the game yourself."
+  },
+
+  "page.add": { "de": "Spiel hinzufügen", "en": "Add a game" },
+  "page.add.text": {
+    "de": "Spiel starten (im Fenstermodus), dann hier anklicken. Die Liste zeigt jedes offene Programm, das noch keinen Eintrag hat. Ab dann landet es bei jedem Start von selbst in seiner Zone.",
+    "en": "Start the game (in windowed mode), then click it here. The list shows every open program that has no entry yet. From then on it lands in its zone by itself at every start."
+  },
+  "page.add.none": { "de": "Gerade ist kein passendes Fenster offen.", "en": "No suitable window is open right now." },
+  "page.add.window": { "de": "+ {title}  ({exe})", "en": "+ {title}  ({exe})" },
+  "page.add.refresh": { "de": "Liste aktualisieren", "en": "Refresh the list" },
+
+  "page.keys": { "de": "Tasten", "en": "Keys" },
+  "page.keys.switch": { "de": "Tasten einschalten", "en": "Switch the keys on" },
+  "page.keys.set": { "de": "Tasten", "en": "Keys" },
+  "page.keys.text": {
+    "de": "Wirken auf das gerade aktive Fenster, auch ohne Eintrag: {keys}+← 16:9 links, {keys}+↓ 16:9 Mitte, {keys}+→ 16:9 rechts, {keys}+↑ Rahmen zurückgeben. Bei einem eingetragenen Spiel merkt sich der Eintrag die neue Zone.",
+    "en": "They act on the active window, also without an entry: {keys}+← 16:9 left, {keys}+↓ 16:9 middle, {keys}+→ 16:9 right, {keys}+↑ give the frame back. For a game with an entry, the entry keeps the new zone."
+  },
+  "page.keys.taken": {
+    "de": "Schon von einem anderen Programm oder von Windows belegt: {keys} – hier tun sie nichts.",
+    "en": "Already used by another program or by Windows: {keys} – they do nothing here."
+  },
+  "page.keys.choose_other": {
+    "de": "Oben eine andere Tastenkombination wählen – rot umrandet ist jede, bei der eine Taste schon vergeben ist.",
+    "en": "Choose another combination above – each one where a key is already in use has a red frame."
+  },
+  "page.keys.moved": { "de": "Per Taste gesetzt: {title} ({exe}) → {zone}", "en": "Placed with a key: {title} ({exe}) → {zone}" },
+  "page.keys.keep": { "de": "Als Spiel eintragen", "en": "Keep it as a game" },
+
+  "page.guide": { "de": "Gut zu wissen", "en": "Good to know" },
+  "page.guide.text": {
+    "de": "Dein Hauptbildschirm hat {sw}×{sh}. Die Zonen 16:9 sind darauf {w169}×{h169} groß, 21:9 Mitte {w219}×{h219}, die Hälften je die halbe Breite. Ein Spiel liegt auf dem Bildschirm, auf dem sein Fenster aufgeht.\n\n•  Im Spiel Fenstermodus einstellen (nicht Vollbild) und als Auflösung die Größe der Zone – das Programm vergrößert das Bild nicht, das Spiel zeichnet in der Größe seines Fensters.\n•  Daneben bleibt der Desktop sichtbar und benutzbar. Solange das Spiel aktiv ist, liegt es vor der Taskleiste; ein Klick daneben nimmt das zurück.\n•  Bringt das Spiel seinen Rahmen zurück (z. B. nach dem Ändern der Optionen), wird er wieder entfernt.\n•  Stopp, Beenden, Entfernen oder Ausschalten eines Eintrags geben dem Fenster seinen Rahmen und seinen alten Platz zurück.\n•  Es werden nur die normalen Fensterfunktionen von Windows benutzt, in das Spiel wird nichts eingeschleust – dieselbe Technik wie bei Borderless Gaming. Bei Spielen mit Kernel-Anti-Cheat gibt es trotzdem keine Garantie.\n•  Spiele, die mit Administratorrechten laufen, kann ein normales Programm nicht verändern – der Eintrag sagt es dann.",
+    "en": "Your main screen is {sw}×{sh}. On it the 16:9 zones are {w169}×{h169}, 21:9 middle {w219}×{h219}, the halves half the width each. A game lies on the screen its window opens on.\n\n•  Set windowed mode in the game (not fullscreen) and the zone's size as its resolution – the program does not scale the picture, the game draws at the size of its window.\n•  The desktop next to it stays visible and usable. While the game is active it lies in front of the taskbar; a click elsewhere takes that back.\n•  If the game brings its frame back (e.g. after changing its options), it is removed again.\n•  Stop, Quit, removing or switching off an entry give the window its frame and its old place back.\n•  Only the normal window functions of Windows are used, nothing is injected into the game – the same technique as Borderless Gaming. For games with kernel anti-cheat there is still no guarantee.\n•  Games that run with administrator rights cannot be changed by a normal program – the entry then says so."
+  },
+  "page.advanced": { "de": "Erweitert", "en": "Advanced" },
+  "page.open_log": { "de": "Protokoll öffnen", "en": "Open the log" },
+  "page.open_settings": { "de": "Einstellungsdatei öffnen", "en": "Open the settings file" },
+
+  "menu.play": { "de": "{game} spielen", "en": "Play {game}" },
+
+  "toast.already": { "de": "{exe} ist schon eingetragen.", "en": "{exe} is already entered." },
+  "toast.added": { "de": "Eingetragen: {game}", "en": "Added: {game}" },
+  "toast.removed": { "de": "Entfernt: {game}", "en": "Removed: {game}" },
+  "toast.play_failed": { "de": "„{launch}“ ließ sich nicht öffnen.", "en": "“{launch}” could not be opened." },
+  "toast.play_not_running": {
+    "de": "Das Spiel startet – Screen Zones ist aber gestoppt und setzt es nicht. Erst „Start“.",
+    "en": "The game starts – but Screen Zones is stopped and will not place it. “Start” first."
+  },
+
+  "keys.win_ctrl_alt": { "de": "Win+Strg+Alt", "en": "Win+Ctrl+Alt" },
+  "keys.ctrl_alt": { "de": "Strg+Alt", "en": "Ctrl+Alt" },
+  "keys.win_alt": { "de": "Win+Alt", "en": "Win+Alt" },
+
+  "zone.left": { "de": "16:9 links", "en": "16:9 left" },
+  "zone.center": { "de": "16:9 Mitte", "en": "16:9 middle" },
+  "zone.right": { "de": "16:9 rechts", "en": "16:9 right" },
+  "zone.wide": { "de": "21:9 Mitte", "en": "21:9 middle" },
+  "zone.left_half": { "de": "Linke Hälfte", "en": "Left half" },
+  "zone.right_half": { "de": "Rechte Hälfte", "en": "Right half" },
+  "zone.full": { "de": "Ganzer Bildschirm", "en": "Whole screen" }
+}
