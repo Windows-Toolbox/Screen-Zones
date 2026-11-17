@@ -10,6 +10,10 @@ One wide screen gets back areas that behave like screens of their own. A game is
 lands in its zone by itself at every start – without a frame, with the desktop next to it visible and usable. On a
 5120×1440 screen, for example, a game runs at 2560×1440 on the left, in the middle or on the right.
 
+Why do all this? Because on my ultrawide with one displayPort instead of two I couldnt get all games/programs to 
+only use the left half, while borderless, keeping the mouse in and staying on top of the taskbar.
+So I figures I could just do it properly myself.
+
 ## Using it
 
 Add the folder in the Toolbox (**Add program…**), press **Start**, and switch on **Start with Windows** if it should
