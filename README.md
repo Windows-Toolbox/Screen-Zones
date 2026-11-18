@@ -58,7 +58,7 @@ list – otherwise script and Screen Zones both move the window.
 
 - **Finding the game**: a shown window whose program (`Rayman Legends.exe`) has an entry. Splash screens, launchers'
   small windows, tool windows and hidden helper windows are not taken: the biggest real window of the process is.
-  After the entry's waiting time (default 3 s) the window is taken. Windows that are already open when the program
+  After the entry's waiting time (none by default) the window is taken. Windows that are already open when the program
   starts – or when an entry is added – are taken at once.
 - **Taking it**: frame and edges removed, placed exactly on the zone of the screen it is on, not activated.
 - **Holding it**: if the game moves or resizes itself, it is put back at once (at most three times in two
@@ -112,7 +112,8 @@ on purpose (why)
   size on any other screen, on the screen the window is on instead of always the main screen
 - ✔ the position switched on the page moves the running game at once ↻ through the Toolbox's `set` instead of the
   script re-reading its `data\settings.json`
-- ✔ 3 seconds for the game to finish its window ↻ a waiting time per entry, 3 s by default
+- ✔ 3 seconds for the game to finish its window ↻ a waiting time per entry, 0 by default: a game that changes its
+  window afterwards gets it fixed again at once
 - ✔ the frame removed again when the game brings it back ↻ on the game's own move/resize at once, otherwise within a
   second (the script looked every 300 ms whether it was running or not)
 - ✔ in front of the taskbar only while active
@@ -122,8 +123,8 @@ on purpose (why)
 - ✔ “Play” opens `uplay://launch/410/0` ↻ per entry, also in the tray menu
 - ✔ the position chosen on the script's page is taken over once (`..\Rayman Legends\data\settings.json`)
 - ✔ the hint “set windowed mode at 2560×1440 once in the game” ↻ per entry, with the size of its zone
-- ◐ all of it with the real Rayman Legends: three zones, the options menu (frame comes back), Alt+Tab, Stop (frame
-  must come back) – only the developer can confirm that at the game
+- ✔ all of it with the real Rayman Legends (hand test 2026-11-18): three zones, the options menu (frame comes back),
+  Alt+Tab, Stop (frame comes back)
 
 ## Later
 

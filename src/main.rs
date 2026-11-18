@@ -45,8 +45,8 @@ pub struct Game {
     pub borderless: bool,
     /// Above the taskbar while it is the active window.
     pub on_top: bool,
-    /// Seconds between the window's appearing and putting it into its zone – a game needs a moment to build its
-    /// window (Rayman: 3).
+    /// Seconds between the window's appearing and putting it into its zone. 0 by default: a game that rebuilds its
+    /// window right after starting gets it fixed again at once anyway (the Rayman script waited 3 s).
     pub delay: u32,
     /// What "Play" opens: `uplay://launch/410/0`, `steam://rungameid/…`, or the path of an exe. Empty = no Play.
     pub launch: String,
@@ -58,7 +58,7 @@ impl Default for Game {
     /// What an entry is when it is added – the program's purpose, so these are on (not "optional", Toolbox
     /// DESIGN.md 2.7).
     fn default() -> Self {
-        Game { name: String::new(), exe: String::new(), zone: Zone::Center, enabled: true, borderless: true, on_top: true, delay: 3, launch: String::new(), last: 0 }
+        Game { name: String::new(), exe: String::new(), zone: Zone::Center, enabled: true, borderless: true, on_top: true, delay: 0, launch: String::new(), last: 0 }
     }
 }
 
