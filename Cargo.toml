@@ -2,6 +2,7 @@
 name = "screen-zones"
 version = "1.0.0"
 edition = "2024"
+license = "MIT"
 publish = false
 description = "Puts games and programs borderless into a fixed area of the screen and keeps them there – one entry per game, applied every time it starts."
 repository = "https://github.com/Windows-Toolbox/Screen-Zones"
