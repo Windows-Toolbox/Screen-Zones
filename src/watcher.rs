@@ -108,6 +108,8 @@ struct Held {
     /// is left alone ("refuses the size") instead of fought with.
     fixes: Vec<Instant>,
     on_top_now: bool,
+    /// It took "on top" away by itself once – logged once, not every second.
+    top_lost: bool,
 }
 
 const FIXES: usize = 3;
@@ -330,7 +332,7 @@ impl Watcher {
 
     fn hold(&mut self, hwnd: Hwnd, pid: u32, exe: &str, target: Target, by_key: bool) {
         self.taken.lock().unwrap_or_else(|e| e.into_inner()).entry(hwnd).or_insert_with(|| win::original(hwnd));
-        self.held.insert(hwnd, Held { pid, exe: exe.to_string(), target, by_key, state: GameState::Held, fixes: vec![], on_top_now: false });
+        self.held.insert(hwnd, Held { pid, exe: exe.to_string(), target, by_key, state: GameState::Held, fixes: vec![], on_top_now: false, top_lost: false });
         if let std::collections::hash_map::Entry::Vacant(e) = self.moves.entry(pid) {
             let h = hook(EVENT_OBJECT_LOCATIONCHANGE, EVENT_OBJECT_LOCATIONCHANGE, pid);
             if !h.is_null() {
@@ -352,7 +354,7 @@ impl Watcher {
             Ok(()) => GameState::Held,
             Err(win::Denied) => GameState::Denied,
         };
-        self.on_top(hwnd, win::foreground() == hwnd);
+        self.on_top(hwnd, win::is_active(hwnd, win::foreground()));
     }
 
     /// The window moved, or the regular look: back into the zone if the game undid it.
@@ -385,11 +387,18 @@ impl Watcher {
         self.put(hwnd);
     }
 
-    /// Above the taskbar only while the game is the active window – a click elsewhere takes it back.
+    /// Above the taskbar only while the game is the active window – a click elsewhere takes it back. A program
+    /// that takes "on top" away by itself while active (Citrix does) gets it again – at the latest with the
+    /// regular look a second later.
     fn on_top(&mut self, hwnd: Hwnd, active: bool) {
         let Some(h) = self.held.get_mut(&hwnd) else { return };
         let want = active && h.target.on_top && h.state != GameState::Denied;
-        if want != h.on_top_now {
+        let lost = want && h.on_top_now && !win::topmost(hwnd);
+        if want != h.on_top_now || lost {
+            if lost && !h.top_lost {
+                h.top_lost = true;
+                kit::app::log(&format!("{} took \"on top\" away by itself – set again", h.exe));
+            }
             win::set_topmost(hwnd, want);
             h.on_top_now = want;
         }
@@ -437,7 +446,7 @@ impl Watcher {
             }
             EVENT_SYSTEM_FOREGROUND => {
                 for other in self.held.keys().copied().collect::<Vec<_>>() {
-                    self.on_top(other, other == hwnd);
+                    self.on_top(other, win::is_active(other, hwnd));
                 }
                 if let Some(h) = self.held.get_mut(&hwnd) {
                     // Clicked into: a game that refused gets another try.
@@ -513,7 +522,7 @@ impl Watcher {
             let fg = win::foreground();
             for hwnd in self.held.keys().copied().collect::<Vec<_>>() {
                 self.check(hwnd);
-                self.on_top(hwnd, hwnd == fg);
+                self.on_top(hwnd, win::is_active(hwnd, fg));
             }
         }
     }

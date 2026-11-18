@@ -149,6 +149,28 @@ pub fn foreground() -> Hwnd {
     unsafe { GetForegroundWindow() as Hwnd }
 }
 
+/// Is `held` the active window – or does the active window belong to it? Some programs put a window of their own
+/// over the held one (Citrix: an overlay of a second process, owned by the viewer); clicking into it must not
+/// count as leaving the game.
+pub fn is_active(held: Hwnd, foreground: Hwnd) -> bool {
+    let mut w = if foreground == 0 { 0 } else { root(foreground) };
+    for _ in 0..8 {
+        if w == 0 {
+            return false;
+        }
+        if w == held {
+            return true;
+        }
+        w = unsafe { GetWindow(h(w), GW_OWNER) as Hwnd };
+    }
+    false
+}
+
+/// Is the window "always on top" right now? A program may take that away by itself (Citrix does).
+pub fn topmost(hwnd: Hwnd) -> bool {
+    unsafe { GetWindowLongPtrW(h(hwnd), GWL_EXSTYLE) & WS_EX_TOPMOST as isize != 0 }
+}
+
 fn monitor_rect(monitor: windows_sys::Win32::Graphics::Gdi::HMONITOR) -> Rect {
     let mut info: MONITORINFO = unsafe { std::mem::zeroed() };
     info.cbSize = size_of::<MONITORINFO>() as u32;
@@ -314,6 +336,29 @@ pub mod tests {
         assert_eq!(unsafe { GetWindowLongPtrW(h(hwnd), GWL_STYLE) } & FRAME, FRAME);
         unsafe { DestroyWindow(h(hwnd)) };
         assert!(!exists(hwnd));
+    }
+
+    /// A window owned by the held one (Citrix's overlay) counts as the held one being active; "on top" is read
+    /// from the window itself.
+    #[test]
+    fn active_through_an_owned_window_and_on_top() {
+        let (held, other) = (hidden_window(), hidden_window());
+        let class: Vec<u16> = "STATIC ".encode_utf16().collect();
+        let owned = unsafe { CreateWindowExW(0, class.as_ptr(), class.as_ptr(), WS_POPUP, 0, 0, 300, 200, h(held), std::ptr::null_mut(), std::ptr::null_mut(), std::ptr::null()) as Hwnd };
+        assert_eq!(unsafe { GetWindow(h(owned), GW_OWNER) as Hwnd }, held);
+        assert!(is_active(held, held) && is_active(held, owned));
+        assert!(!is_active(held, other) && !is_active(held, 0) && !is_active(owned, held));
+        assert!(!topmost(held));
+        set_topmost(held, true);
+        assert!(topmost(held));
+        set_topmost(held, false);
+        assert!(!topmost(held));
+        assert_eq!(unsafe { IsWindowVisible(h(held)) }, 0, "nothing was shown");
+        unsafe {
+            DestroyWindow(h(owned));
+            DestroyWindow(h(held));
+            DestroyWindow(h(other));
+        }
     }
 
     #[test]

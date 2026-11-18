@@ -58,7 +58,9 @@ list – otherwise script and Screen Zones both move the window.
 - **Holding it**: if the game moves or resizes itself, it is put back at once (at most three times in two
   seconds – a game that keeps undoing it is left alone and its entry says “does not take the size”; clicking into
   the game tries again). While a game is held the program also looks once a second whether the frame came back
-  (a game may change its style without moving). In front of the taskbar only while the game is the active window.
+  (a game may change its style without moving). In front of the taskbar only while the game is the active window
+  (or a window that belongs to it, such as the overlay Citrix puts over its session) – and looked at once a second:
+  a program that takes “on top” away by itself (Citrix does) gets it back.
 - **Giving back**: removing or switching off an entry, “Give the frame back”, Stop and Quit give each window its
   styles and its old place back. Only a crash of the program leaves a window as it is.
 
