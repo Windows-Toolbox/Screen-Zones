@@ -135,6 +135,8 @@ built yet:
 - **Special cases**: games running as administrator (the program started through a task with admin rights), keeping
   the mouse inside the zone (`ClipCursor`, for games that scroll at the screen's edge), own zones (fixed pixels,
   shares of the width), detecting exclusive fullscreen and saying so.
+- **From Steam Shortcuts** (idea 2026-11-18): read the shortcut Steam Shortcuts made for a game (its path / target),
+  so an entry can be filled from there instead of typing exe and Play target.
 - **Extensions**: a black background around the game (“cinema mode”, toggled with a key); start parameters per game
   (`-windowed`); scaling a smaller picture up to the zone; two games side by side with a key that swaps them; a zone
   editor; profiles; recognising by window title; muting a game that is not active; zones on several screens in the
