@@ -39,10 +39,6 @@ always run. Everything else is on the program's page there:
 Without the Toolbox the program runs too: a double-click starts it, and after a moment it shows a tray icon of its
 own (status, Play for each game, Quit). Its settings then stand in `data\settings.json`.
 
-**Switching over from the Rayman Legends script:** at its first start Screen Zones finds `..\Rayman Legends\` and
-takes Rayman over as its first entry, at the position chosen there. Then remove *Rayman Legends* from the Toolbox's
-list – otherwise script and Screen Zones both move the window.
-
 ### What it does not do
 
 - **Exclusive fullscreen** is not redirected: the game needs a windowed mode.
@@ -82,7 +78,7 @@ kit is used instead. Screen Zones needs a kit that knows keys pointing into a li
 
 | File | What it holds |
 |---|---|
-| `src\main.rs` | settings, the page, the buttons, taking over the Rayman script's position |
+| `src\main.rs` | settings, the page, the buttons |
 | `src\watcher.rs` | the worker: window events, holding the games, the keys |
 | `src\win.rs` | every Windows call about other programs' windows |
 | `src\zones.rs` | where a zone lies on a screen (plain arithmetic) |
@@ -92,7 +88,7 @@ kit is used instead. Screen Zones needs a kit that knows keys pointing into a li
 A new setting of a game is one field in `Game` and one line in `page` (inside `l.item`); a new zone is one entry in `Zone` with its
 rectangle and its texts.
 
-**Tests**: `cargo test` – zones, page, buttons, texts, taking over Rayman, and taking and giving back a hidden window
+**Tests**: `cargo test` – zones, page, buttons, texts, and taking and giving back a hidden window
 of the test itself (nothing pops up). `cargo test -- --ignored --test-threads=1` adds the whole chain with Windows'
 real events against a window of a second process (fully transparent, never activated, lets clicks through – only a
 taskbar button shows for a moment): it appears, waits, is taken, gets its frame back and loses it again, moves
@@ -122,15 +118,13 @@ on purpose (why)
 - ↻ waited at most 5 minutes for the game and ended with it – Screen Zones runs in the background and takes the
   game at every start
 - ✔ “Play” opens `uplay://launch/410/0` ↻ per entry, also in the tray menu
-- ✔ the position chosen on the script's page is taken over once (`..\Rayman Legends\data\settings.json`)
 - ✔ the hint “set windowed mode at 2560×1440 once in the game” ↻ per entry, with the size of its zone
 - ✔ all of it with the real Rayman Legends (hand test 2026-11-18): three zones, the options menu (frame comes back),
   Alt+Tab, Stop (frame comes back)
 
 ## Later
 
-From the concept ([KONZEPT.md](KONZEPT.md), written for the Rayman Legends repo before Screen Zones existed), not
-built yet:
+Not built yet:
 
 - **Special cases**: games running as administrator (the program started through a task with admin rights), keeping
   the mouse inside the zone (`ClipCursor`, for games that scroll at the screen's edge), own zones (fixed pixels,

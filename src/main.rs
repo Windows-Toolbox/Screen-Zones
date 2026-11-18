@@ -6,7 +6,7 @@
 //! "one entry per game".
 //!
 //! The files:
-//!   main.rs      settings, the page, the buttons, taking over the Rayman script's position
+//!   main.rs      settings, the page, the buttons
 //!   watcher.rs   the worker: window events from Windows, holding the games, the keys
 //!   win.rs       every Windows call about other programs' windows
 //!   zones.rs     where a zone lies on a screen (plain arithmetic)
@@ -19,14 +19,11 @@ mod watcher;
 mod win;
 mod zones;
 
-use std::path::Path;
-
 use kit::app::{self, Program};
 use kit::page::{Builder, Button, Item};
 use kit::proto::{Health, MenuEntry, Status, Tray};
 use kit::{process, t};
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 use watcher::{GameState, Report, Taken};
 use zones::{Rect, Zone};
@@ -372,40 +369,9 @@ impl Program for Zones {
     }
 }
 
-// ---------- from the Rayman Legends script ----------
-
-/// On the very first start (no `data\settings.json` yet): if the Rayman Legends script lies next to this program
-/// (`..\Rayman Legends\` – the folder of all Toolbox programs), its game becomes the first entry, at the position
-/// chosen on its page. So switching over keeps everything.
-fn carry_over(program_dir: &Path, data: &Path) {
-    if data.join("settings.json").exists() {
-        return;
-    }
-    let read = |file: &Path| -> Option<Value> { serde_json::from_str(std::fs::read_to_string(file).ok()?.trim_start_matches('\u{feff}')).ok() };
-    for above in program_dir.ancestors().skip(1).take(3) {
-        let rayman = above.join("Rayman Legends");
-        let Some(manifest) = read(&rayman.join("program.json")) else { continue };
-        if manifest["id"] != "rayman_legends" {
-            continue;
-        }
-        let zone = match read(&rayman.join("data").join("settings.json")).and_then(|s| s["Pos"].as_str().map(str::to_string)).as_deref() {
-            Some("Left") => Zone::Left,
-            Some("Right") => Zone::Right,
-            _ => Zone::Center,
-        };
-        let launch = manifest["launch"].as_str().unwrap_or_default().to_string();
-        let settings = Settings { games: vec![Game { name: "Rayman Legends".into(), exe: "Rayman Legends.exe".into(), zone, launch, ..Game::default() }], ..Settings::default() };
-        let _ = std::fs::create_dir_all(data);
-        let _ = std::fs::write(data.join("settings.json"), serde_json::to_string_pretty(&settings).unwrap_or_default());
-        app::log(&format!("Rayman Legends taken over from {}", rayman.display()));
-        return;
-    }
-}
-
 fn main() {
     kit::texts!();
     app::init(&Zones::META);
-    carry_over(&app::program_dir(), &app::data_dir());
     app::run(Zones::new(), watcher::work);
 }
 
@@ -538,26 +504,5 @@ mod tests {
         // An old file with fields missing keeps the defaults.
         let s: Settings = serde_json::from_str(r#"{"games":[{"exe":"a.exe"}]}"#).unwrap();
         assert_eq!(s.games[0], Game { exe: "a.exe".into(), ..Game::default() });
-    }
-
-    #[test]
-    fn the_rayman_script_is_taken_over() {
-        let root = std::env::temp_dir().join(format!("screen-zones-carry-{}", std::process::id()));
-        let _ = std::fs::remove_dir_all(&root);
-        let (program, data) = (root.join("Screen Zones").join("dist"), root.join("Screen Zones").join("dist").join("data"));
-        std::fs::create_dir_all(root.join("Rayman Legends").join("data")).unwrap();
-        std::fs::create_dir_all(&program).unwrap();
-        // Without the script nothing happens.
-        carry_over(&program, &data);
-        assert!(!data.join("settings.json").exists());
-        std::fs::write(root.join("Rayman Legends/program.json"), r#"{"id":"rayman_legends","launch":"uplay://launch/410/0"}"#).unwrap();
-        std::fs::write(root.join("Rayman Legends/data/settings.json"), "\u{feff}{\"Pos\": \"Left\"}").unwrap();
-        carry_over(&program, &data);
-        let s: Settings = serde_json::from_str(&std::fs::read_to_string(data.join("settings.json")).unwrap()).unwrap();
-        assert_eq!(s.games, vec![Game { zone: Zone::Left, ..rayman() }]);
-        std::fs::write(data.join("settings.json"), "{}").unwrap();
-        carry_over(&program, &data);
-        assert_eq!(std::fs::read_to_string(data.join("settings.json")).unwrap(), "{}", "never a second time");
-        std::fs::remove_dir_all(&root).ok();
     }
 }
