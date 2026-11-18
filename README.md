@@ -101,7 +101,8 @@ itself and is put back, changes zone, and gets everything back on Stop. `keys_on
 
 ## What the Rayman script could do – the checklist
 
-Written from `rayman_borderless.ps1` and `program.json` of the Rayman Legends repo (Toolbox `DESIGN.md`, section 14).
+Written from `rayman_borderless.ps1` and `program.json` of the Rayman Legends script (now in the Toolbox repo as
+`template\script\`; Toolbox `DESIGN.md`, section 14).
 
 ✔ in this version, covered by a test · ◐ in this version, **not yet tried** with the real game · ↻ works differently
 on purpose (why)
@@ -128,7 +129,8 @@ on purpose (why)
 
 ## Later
 
-From the concept (`KONZEPT.md` in the Rayman Legends repo), not built yet:
+From the concept ([KONZEPT.md](KONZEPT.md), written for the Rayman Legends repo before Screen Zones existed), not
+built yet:
 
 - **Special cases**: games running as administrator (the program started through a task with admin rights), keeping
   the mouse inside the zone (`ClipCursor`, for games that scroll at the screen's edge), own zones (fixed pixels,
