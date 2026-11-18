@@ -7,8 +7,8 @@
   "status.held": { "de": "Hält: {games}", "en": "Holding: {games}" },
   "status.waiting": { "de": "Gleich gesetzt: {games}", "en": "Placing in a moment: {games}" },
   "status.no_games": {
-    "de": "Läuft – noch kein Spiel eingetragen (unten „Spiel hinzufügen“)",
-    "en": "Running – No game entered yet (“Add a game” below)"
+    "de": "Läuft – noch kein Spiel eingetragen (oben „+ Spiel hinzufügen“)",
+    "en": "Running – No game entered yet (“+ Add a game” above)"
   },
   "status.ready": { "de": "Bereit – keins deiner Spiele läuft", "en": "Ready – none of your games is running" },
 
@@ -106,5 +106,19 @@
   "zone.wide": { "de": "21:9 Mitte", "en": "21:9 middle" },
   "zone.left_half": { "de": "Linke Hälfte", "en": "Left half" },
   "zone.right_half": { "de": "Rechte Hälfte", "en": "Right half" },
-  "zone.full": { "de": "Ganzer Bildschirm", "en": "Whole screen" }
+  "zone.full": { "de": "Ganzer Bildschirm", "en": "Whole screen" },
+  "group.active": { "de": "Läuft gerade", "en": "Running" },
+  "group.problem": { "de": "Braucht Aufmerksamkeit", "en": "Needs attention" },
+  "group.idle": { "de": "Alle anderen", "en": "All others" },
+  "group.off": { "de": "Ausgeschaltet", "en": "Switched off" },
+  "page.sort.last": { "de": "Zuletzt gespielt", "en": "Last played" },
+  "page.add.button": { "de": "+ Spiel hinzufügen", "en": "+ Add a game" },
+  "page.empty": {
+    "de": "Noch kein Spiel eingetragen. Spiel im Fenstermodus starten, dann oben „+ Spiel hinzufügen“.",
+    "en": "No game entered yet. Start a game in windowed mode, then “+ Add a game” above."
+  },
+  "game.stopped": {
+    "de": "Screen Zones ist gestoppt – das Fenster wird gerade nicht gesetzt",
+    "en": "Screen Zones is stopped – the window is not placed right now"
+  }
 }

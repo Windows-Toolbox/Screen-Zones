@@ -41,7 +41,8 @@ pub enum Zone {
 }
 
 impl Zone {
-    pub const ALL: [Zone; 7] = [Zone::Left, Zone::Center, Zone::Right, Zone::Wide, Zone::LeftHalf, Zone::RightHalf, Zone::Full];
+    /// In the order of the page's buttons: the big ones first, then the 16:9 ones, 21:9 last.
+    pub const ALL: [Zone; 7] = [Zone::Full, Zone::LeftHalf, Zone::RightHalf, Zone::Left, Zone::Center, Zone::Right, Zone::Wide];
 
     /// The name in settings and texts (`zone.left`).
     pub fn key(self) -> &'static str {

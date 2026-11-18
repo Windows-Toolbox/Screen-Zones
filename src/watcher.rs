@@ -679,6 +679,18 @@ fn publish(rt: &Runtime<Zones>, w: &mut Watcher, first: bool) {
     let report = w.report();
     let list = w.list();
     let screen: Rect = win::main_screen();
+    // Games that were not running a moment ago: "Last played" is now.
+    let started: Vec<String> = rt.with(|p, _| {
+        report.games.iter().filter(|(exe, state)| **state != GameState::NotRunning && p.report.games.get(*exe).is_none_or(|old| *old == GameState::NotRunning)).map(|(exe, _)| exe.clone()).collect()
+    });
+    if !started.is_empty() {
+        let now = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(0, |d| d.as_secs());
+        rt.update(|s| {
+            for g in s.games.iter_mut().filter(|g| started.contains(&key(&g.exe))) {
+                g.last = now;
+            }
+        });
+    }
     let changed = rt.with(|p, _| {
         let mut changed = first || p.report != report || p.screen != screen;
         p.report = report;

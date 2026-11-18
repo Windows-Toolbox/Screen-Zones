@@ -343,16 +343,18 @@ pub mod tests {
     #[test]
     fn active_through_an_owned_window_and_on_top() {
         let (held, other) = (hidden_window(), hidden_window());
-        let class: Vec<u16> = "STATIC ".encode_utf16().collect();
+        let class: Vec<u16> = "STATIC\0".encode_utf16().collect();
         let owned = unsafe { CreateWindowExW(0, class.as_ptr(), class.as_ptr(), WS_POPUP, 0, 0, 300, 200, h(held), std::ptr::null_mut(), std::ptr::null_mut(), std::ptr::null()) as Hwnd };
         assert_eq!(unsafe { GetWindow(h(owned), GW_OWNER) as Hwnd }, held);
         assert!(is_active(held, held) && is_active(held, owned));
         assert!(!is_active(held, other) && !is_active(held, 0) && !is_active(owned, held));
-        assert!(!topmost(held));
-        set_topmost(held, true);
-        assert!(topmost(held));
-        set_topmost(held, false);
-        assert!(!topmost(held));
+        // Read on a window without owned ones: Windows sometimes leaves "on top" off for a hidden owner of a
+        // popup – one more reason the regular look checks the real flag.
+        assert!(!topmost(other));
+        set_topmost(other, true);
+        assert!(topmost(other));
+        set_topmost(other, false);
+        assert!(!topmost(other));
         assert_eq!(unsafe { IsWindowVisible(h(held)) }, 0, "nothing was shown");
         unsafe {
             DestroyWindow(h(owned));

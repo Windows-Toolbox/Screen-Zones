@@ -22,7 +22,7 @@ mod zones;
 use std::path::Path;
 
 use kit::app::{self, Program};
-use kit::page::Builder;
+use kit::page::{Builder, Button, Item};
 use kit::proto::{Health, MenuEntry, Status, Tray};
 use kit::{process, t};
 use serde::{Deserialize, Serialize};
@@ -50,13 +50,15 @@ pub struct Game {
     pub delay: u32,
     /// What "Play" opens: `uplay://launch/410/0`, `steam://rungameid/…`, or the path of an exe. Empty = no Play.
     pub launch: String,
+    /// When its window was last found running (seconds since 1970; 0 = never) – for the sort "Last played".
+    pub last: u64,
 }
 
 impl Default for Game {
     /// What an entry is when it is added – the program's purpose, so these are on (not "optional", Toolbox
     /// DESIGN.md 2.7).
     fn default() -> Self {
-        Game { name: String::new(), exe: String::new(), zone: Zone::Center, enabled: true, borderless: true, on_top: true, delay: 3, launch: String::new() }
+        Game { name: String::new(), exe: String::new(), zone: Zone::Center, enabled: true, borderless: true, on_top: true, delay: 3, launch: String::new(), last: 0 }
     }
 }
 
@@ -140,6 +142,34 @@ fn zone_name(zone: Zone) -> String {
     t!(&format!("zone.{}", zone.key()))
 }
 
+/// The list's groups, in their order – "Active first" sorts by it.
+const GROUPS: [(&str, bool); 4] = [("active", true), ("problem", true), ("idle", false), ("off", false)];
+
+/// The list's key – the Toolbox remembers view, filter and sort under it.
+const LIST: &str = "screen_zones.games";
+
+impl Zones {
+    /// The group, the dot and its text of an entry.
+    fn row_state(&self, g: &Game) -> (&'static str, Health, String) {
+        let size = g.zone.rect(self.screen);
+        if !g.enabled {
+            return ("off", Health::Unknown, t!("game.off"));
+        }
+        if !self.running {
+            return ("idle", Health::Unknown, t!("game.stopped"));
+        }
+        match self.state(g) {
+            GameState::NotRunning => ("idle", Health::Unknown, t!("game.not_running")),
+            GameState::Waiting => ("active", Health::Ok, t!("game.waiting")),
+            GameState::Held => ("active", Health::Ok, t!("game.held", zone = zone_name(g.zone), w = size.w, h = size.h)),
+            GameState::Minimized => ("active", Health::Ok, t!("game.minimized")),
+            GameState::Released => ("active", Health::Warn, t!("game.released")),
+            GameState::Refused => ("problem", Health::Warn, t!("game.refused", w = size.w, h = size.h)),
+            GameState::Denied => ("problem", Health::Bad, t!("game.denied")),
+        }
+    }
+}
+
 impl Program for Zones {
     type Settings = Settings;
     const META: kit::Meta = kit::meta!();
@@ -150,61 +180,70 @@ impl Program for Zones {
             p.section(t!("page.status"), |p| p.text(t!("page.stopped")));
         }
         let zones: Vec<(Zone, String)> = Zone::ALL.iter().map(|z| (*z, zone_name(*z))).collect();
-        for (i, g) in s.games.iter().enumerate() {
-            let k = |field: &str| format!("games.{i}.{field}");
-            let size = g.zone.rect(self.screen);
-            p.section(if g.name.trim().is_empty() { g.exe.clone() } else { g.name.clone() }, |p| {
-                if !g.enabled {
-                    p.text(t!("game.off"));
-                } else if self.running {
-                    let (text, health) = match self.state(g) {
-                        GameState::NotRunning => (t!("game.not_running"), Health::Unknown),
-                        GameState::Waiting => (t!("game.waiting"), Health::Ok),
-                        GameState::Held => (t!("game.held", zone = zone_name(g.zone), w = size.w, h = size.h), Health::Ok),
-                        GameState::Refused => (t!("game.refused", w = size.w, h = size.h), Health::Warn),
-                        GameState::Denied => (t!("game.denied"), Health::Bad),
-                        GameState::Minimized => (t!("game.minimized"), Health::Ok),
-                        GameState::Released => (t!("game.released"), Health::Warn),
-                    };
-                    p.status(text, health);
+        p.list(LIST, |l| {
+            for (id, open) in GROUPS {
+                l.group(id, t!(&format!("group.{id}")), open);
+            }
+            l.sort("last", t!("page.sort.last")).empty(t!("page.empty"));
+            l.add(t!("page.add.button"), |p| {
+                p.text(t!("page.add.text"));
+                if self.windows.is_empty() {
+                    p.text(t!("page.add.none"));
                 }
-                p.choice(t!("game.zone"), &k("zone"), &zones);
+                for w in &self.windows {
+                    p.buttons(|b| {
+                        b.button(t!("page.add.window", title = w.title.trim(), exe = w.exe), &format!("add:{}", w.exe));
+                    });
+                }
                 p.buttons(|b| {
-                    if !g.launch.trim().is_empty() {
-                        b.button(t!("game.play"), &format!("play:{}", g.exe));
-                    }
-                    if self.running && self.state(g) == GameState::Released {
-                        b.button(t!("game.retake"), &format!("retake:{}", g.exe));
-                    } else if self.running && g.enabled && self.state(g) != GameState::NotRunning {
-                        b.button(t!("game.release"), &format!("release:{}", g.exe));
-                    }
-                    b.button(t!("game.remove"), &format!("remove:{}", g.exe));
+                    b.button(t!("page.add.refresh"), "refresh");
                 });
-                p.text(t!("game.set_in_game", w = size.w, h = size.h));
-                p.switch(t!("game.enabled"), &k("enabled"));
-                p.switch(t!("game.borderless"), &k("borderless"));
-                p.switch(t!("game.on_top"), &k("on_top"));
-                p.slider(t!("game.delay"), &k("delay"), 0.0, 15.0, 1.0, "s");
-                p.entry(t!("game.name"), &k("name"));
-                p.entry(t!("game.launch"), &k("launch"));
-                p.text(t!("game.recognised", exe = g.exe));
             });
-        }
-        p.section(t!("page.add"), |p| {
-            p.text(t!("page.add.text"));
-            if self.windows.is_empty() {
-                p.text(t!("page.add.none"));
-            }
-            for w in &self.windows {
-                p.buttons(|b| {
-                    b.button(t!("page.add.window", title = w.title.trim(), exe = w.exe), &format!("add:{}", w.exe));
+            for (i, g) in s.games.iter().enumerate() {
+                let k = |field: &str| format!("games.{i}.{field}");
+                let size = g.zone.rect(self.screen);
+                let (group, state, text) = self.row_state(g);
+                let item = Item {
+                    id: g.exe.to_lowercase(),
+                    title: if g.name.trim().is_empty() { g.exe.clone() } else { g.name.clone() },
+                    subtitle: g.exe.clone(),
+                    state,
+                    text: text.clone(),
+                    group: group.into(),
+                    tags: vec![zone_name(g.zone)],
+                    button: (!g.launch.trim().is_empty()).then(|| Button { label: t!("game.play"), action: format!("play:{}", g.exe) }),
+                    // Most recent first; never played last.
+                    order: if g.last > 0 { [("last".to_string(), -(g.last as f64))].into() } else { Default::default() },
+                    ..Item::default()
+                };
+                l.item(item, |p| {
+                    if g.enabled && self.running {
+                        p.status(text, if state == Health::Unknown { Health::Ok } else { state });
+                    }
+                    p.choice(t!("game.zone"), &k("zone"), &zones);
+                    p.buttons(|b| {
+                        if !g.launch.trim().is_empty() {
+                            b.button(t!("game.play"), &format!("play:{}", g.exe));
+                        }
+                        if self.running && self.state(g) == GameState::Released {
+                            b.button(t!("game.retake"), &format!("retake:{}", g.exe));
+                        } else if self.running && g.enabled && self.state(g) != GameState::NotRunning {
+                            b.button(t!("game.release"), &format!("release:{}", g.exe));
+                        }
+                        b.button(t!("game.remove"), &format!("remove:{}", g.exe));
+                    });
+                    p.text(t!("game.set_in_game", w = size.w, h = size.h));
+                    p.switch(t!("game.enabled"), &k("enabled"));
+                    p.switch(t!("game.borderless"), &k("borderless"));
+                    p.switch(t!("game.on_top"), &k("on_top"));
+                    p.slider(t!("game.delay"), &k("delay"), 0.0, 15.0, 1.0, "s");
+                    p.entry(t!("game.name"), &k("name"));
+                    p.entry(t!("game.launch"), &k("launch"));
+                    p.text(t!("game.recognised", exe = g.exe));
                 });
             }
-            p.buttons(|b| {
-                b.button(t!("page.add.refresh"), "refresh");
-            });
         });
-        p.section(t!("page.keys"), |p| {
+        p.section_closed(t!("page.keys"), |p| {
             p.switch(t!("page.keys.switch"), "hotkeys");
             // A combination found taken gets a thin red frame – so another one can be chosen at a glance.
             let sets: Vec<(KeySet, String, Option<Health>)> =
@@ -223,12 +262,12 @@ impl Program for Zones {
                 });
             }
         });
-        p.section(t!("page.guide"), |p| {
+        p.section_closed(t!("page.guide"), |p| {
             let s = self.screen;
             let (c, w) = (Zone::Center.rect(s), Zone::Wide.rect(s));
             p.text(t!("page.guide.text", sw = s.w, sh = s.h, w169 = c.w, h169 = c.h, w219 = w.w, h219 = w.h));
         });
-        p.section(t!("page.advanced"), |p| {
+        p.section_closed(t!("page.advanced"), |p| {
             p.buttons(|b| {
                 b.button(t!("page.open_log"), "open_log").button(t!("page.open_settings"), "open_settings");
             });
@@ -417,6 +456,8 @@ mod tests {
         let s = Settings { games: vec![rayman()], ..Settings::default() };
         let text = page(&z, &s);
         assert!(text.contains("Stopped") && text.contains("2560×1440") && text.contains("play:Rayman Legends.exe"));
+        assert!(text.contains(r#""type":"list","key":"screen_zones.games""#) && text.contains(r#""id":"rayman legends.exe""#));
+        assert!(text.contains(r#""group":"idle""#) && text.contains(r#""tags":["16:9 middle"]"#));
         assert!(!text.contains("release:"), "nothing to give back while stopped");
 
         z.running = true;
@@ -424,13 +465,18 @@ mod tests {
         z.report.games.insert("rayman legends.exe".into(), GameState::Held);
         let text = page(&z, &s);
         assert!(text.contains("Held: 16:9 middle, 2560×1440") && text.contains("release:Rayman Legends.exe"));
+        assert!(text.contains(r#""group":"active""#), "a held game is active");
         assert_eq!(z.status(true).text, "Holding: Rayman Legends");
         z.report.games.insert("rayman legends.exe".into(), GameState::Released);
         assert!(page(&z, &s).contains("retake:Rayman Legends.exe"));
         z.report.games.insert("rayman legends.exe".into(), GameState::Denied);
         assert_eq!(z.status(true).state, Health::Bad);
+        assert!(page(&z, &s).contains(r#""group":"problem""#));
         z.report.games.insert("rayman legends.exe".into(), GameState::Refused);
         assert_eq!(z.status(true).state, Health::Warn);
+        let off = Settings { games: vec![Game { enabled: false, last: 50, ..rayman() }], ..Settings::default() };
+        let text = page(&z, &off);
+        assert!(text.contains(r#""group":"off""#) && text.contains(r#""order":{"last":-50.0}"#));
         assert!(page(&z, &s).contains("2560×1440"));
 
         z.report.games.clear();

@@ -19,8 +19,14 @@ So I figured I could just do it properly myself.
 Add the folder in the Toolbox (**Add program…**), press **Start**, and switch on **Start with Windows** if it should
 always run. Everything else is on the program's page there:
 
-- **Add a game**: start the game in windowed mode, then click it in the list – it shows every open program that has
-  no entry yet.
+- **The list of games**: built for many entries. One row per game; a click opens its settings under it. Two
+  switches above it combine: **Groups** (Running / Needs attention / All others / Switched off, each folding) and
+  **Detail** (the games on the left, the chosen one's settings on the right). A filter field (Ctrl+F) searches
+  name, program and zone; chips narrow it to one group; the sort is "Active first" (running and troubled games on
+  top), "Last played" or A–Z. Rows do not jump while the mouse is over the list. Keys, Good to know and Advanced
+  start folded. Needs a Toolbox from 2026-11-18 on – an older one shows "needs a newer Toolbox" for the list.
+- **Add a game** (the button above the list): start the game in windowed mode, then click it – the list shows every
+  open program that has no entry yet.
 - **Per game**: the zone (16:9 left / middle / right, 21:9 middle, left or right half, whole screen) – changing it
   moves a running game at once; **Play** (opens `uplay://…`, `steam://rungameid/…` or an exe); **Give the frame
   back**; switches for the frame and for staying in front of the taskbar; the waiting time after the window appears;
@@ -83,7 +89,7 @@ kit is used instead. Screen Zones needs a kit that knows keys pointing into a li
 | `assets\i18n.json` | every text, German and English |
 | `assets\icon.ico` | the icon, made from `assets\logo_source.png` |
 
-A new setting of a game is one field in `Game` and one line in `page`; a new zone is one entry in `Zone` with its
+A new setting of a game is one field in `Game` and one line in `page` (inside `l.item`); a new zone is one entry in `Zone` with its
 rectangle and its texts.
 
 **Tests**: `cargo test` – zones, page, buttons, texts, taking over Rayman, and taking and giving back a hidden window
