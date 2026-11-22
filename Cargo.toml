@@ -1,6 +1,6 @@
 [package]
 name = "screen-zones"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2024"
 license = "MIT"
 publish = false
@@ -11,7 +11,7 @@ repository = "https://github.com/Windows-Toolbox/Screen-Zones"
 [package.metadata.toolbox]
 id = "screen_zones"
 exe = "ScreenZones.exe"
-category = { de = "Spiele", en = "Games" }
+category = { de = "Allgemein", en = "General" }
 background = true
 name = "Screen Zones"
 description = { de = "Setzt Spiele und Programme rahmenlos in einen festen Bereich des Bildschirms und hält sie dort – ein Eintrag pro Spiel, bei jedem Start von selbst. Der Nachfolger des Rayman-Legends-Skripts.", en = "Puts games and programs borderless into a fixed area of the screen and keeps them there – one entry per game, applied every time it starts. The successor of the Rayman Legends script." }
