@@ -129,9 +129,15 @@ Not built yet:
 - **Special cases**: games running as administrator (the program started through a task with admin rights), keeping
   the mouse inside the zone (`ClipCursor`, for games that scroll at the screen's edge), own zones (fixed pixels,
   shares of the width), detecting exclusive fullscreen and saying so.
+- **Which screen, per game** (idea of the user, 2026-11-22): with more than one screen, each entry also names the
+  screen its zone (left, middle, right half …) is placed on, instead of always the screen the game opened on. A
+  default for all entries is chosen once on the page (e.g. "the main screen" or "the screen the game opens on" –
+  today's behaviour); an entry follows that default until it is given a screen of its own. Screens are told apart
+  by something that survives a restart and a changed order (the monitor's device name / position), and an entry
+  whose screen is missing falls back to the default.
 - **From Steam Shortcuts** (idea 2026-11-18): read the shortcut Steam Shortcuts made for a game (its path / target),
   so an entry can be filled from there instead of typing exe and Play target.
 - **Extensions**: a black background around the game (“cinema mode”, toggled with a key); start parameters per game
   (`-windowed`); scaling a smaller picture up to the zone; two games side by side with a key that swaps them; a zone
-  editor; profiles; recognising by window title; muting a game that is not active; zones on several screens in the
-  page; ready-made entries for known games.
+  editor; profiles; recognising by window title; muting a game that is not active; ready-made entries for known
+  games.
